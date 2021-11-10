@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "940448988201",
+    "project_id": "daun-b56ef",
+    "storage_bucket": "daun-b56ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940448988201:android:6137a5518c5be46291f038",
+        "android_client_info": {
+          "package_name": "com.example.daun"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940448988201-25g4jn9gf38iaj5487ducbbhlokenn4u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.daun",
+            "certificate_hash": "a16abcc749092fbbc99068eb523c8ad2f0bcf6ac"
+          }
+        },
+        {
+          "client_id": "940448988201-vmo44alnbnldfcqrro414rjiuisk01c5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZnNlOZ6GLqVGb8SrrpjfUYvzVtJHBlpA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940448988201-vmo44alnbnldfcqrro414rjiuisk01c5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
