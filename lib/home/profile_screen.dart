@@ -1,6 +1,8 @@
-import 'package:daun/login/login_screen.dart';
+import 'package:daun/onboarding/onboarding_screen.dart';
+import 'package:daun/provider/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -10,8 +12,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final user = FirebaseAuth.instance.currentUser!;
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Padding(
@@ -40,8 +45,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 50,
             ),
             ClipOval(
-              child: Image.asset(
-                'assets/image/logo.png',
+              child: Image.network(
+                user.photoURL!,
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,
@@ -51,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 30,
             ),
             Text(
-              'NAMA AKUN',
+              user.displayName!,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18,
@@ -69,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 color: Color(0xffDD5151),
-                onPressed: () {
+                onPressed: () async {
                   _showDialogConfirmation();
                 },
                 child: Text(
@@ -159,11 +164,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Colors.white,
               ),
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (Route<dynamic> route) => false);
+                final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+                await provider.logout();
+                setState(() {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => OnBoardingScreen()),
+                      (Route<dynamic> route) => false);
+                });
               },
             ),
           ],
@@ -172,5 +179,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
-
 }

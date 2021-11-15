@@ -1,5 +1,6 @@
 import 'package:daun/home/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'coming_soon_screen.dart';
 import 'dashboard_screen.dart';
@@ -58,4 +59,15 @@ class _HomePageState extends State<HomePage> {
       body: tabs[_currentIndex],
     );
   }
+}
+
+void toast(String message) {
+  Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0);
 }

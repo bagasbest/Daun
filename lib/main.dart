@@ -1,7 +1,9 @@
 import 'package:daun/login/login_screen.dart';
+import 'package:daun/provider/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'home/home_screen.dart';
 import 'onboarding/onboarding_screen.dart';
@@ -20,14 +22,20 @@ class MyApp extends StatelessWidget {
     /// cek apakah pengguna sudah login sebelumnya atau belum, jika sudah langsung masuk ke homepage, jika belum masuk ke login
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      return MaterialApp(
-        theme: ThemeData(fontFamily: 'Numans'),
-        home: HomePage(),
+      return ChangeNotifierProvider(
+        create: (BuildContext context) => GoogleSignInProvider(),
+        child: MaterialApp(
+          theme: ThemeData(fontFamily: 'Numans'),
+          home: HomePage(),
+        ),
       );
     } else {
-      return MaterialApp(
-        theme: ThemeData(fontFamily: 'Numans'),
-        home: OnBoardingScreen(),
+      return ChangeNotifierProvider(
+        create: (BuildContext context) => GoogleSignInProvider(),
+        child: MaterialApp(
+          theme: ThemeData(fontFamily: 'Numans'),
+          home: OnBoardingScreen(),
+        ),
       );
     }
   }
