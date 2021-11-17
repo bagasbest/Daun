@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daun/home/dashboard_list.dart';
 import 'package:daun/onboarding/onboarding_home.dart';
 import 'package:daun/onboarding/onboarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:snapping_sheet/snapping_sheet.dart';
 
 import 'dashboard_add_course.dart';
 
@@ -26,27 +29,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         onPressed: () {
-          Route route =
-          MaterialPageRoute(builder: (context) => AddCourse());
+          Route route = MaterialPageRoute(builder: (context) => AddCourse());
           Navigator.push(context, route);
         },
       ),
-      body: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasData) {
-            return body();
-          } else if (snapshot.hasError) {
-            return signOut();
-          } else {
-            return signOut();
-          }
-        },
-      ),
+      body: body(),
     );
   }
 
@@ -126,7 +113,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
+          DraggableScrollableSheet(
+            initialChildSize: 0.55,
+            minChildSize: 0.55,
+            maxChildSize: 0.9,
+            builder: (context, scrollController) {
+              return ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+                child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.width,
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('course')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        return (snapshot.data!.size > 0)
+                            ? ListOfCourse(
+                                document: snapshot.data!.docs,
+                                controller: scrollController,
+                              )
+                            : _emptyData();
+                      } else {
+                        return _emptyData();
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _emptyData() {
+    return Container(
+      child: Center(
+        child: Text(
+          'Tidak Ada Materi\nTersedia',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.black54, fontWeight: FontWeight.bold, fontSize: 18),
+        ),
       ),
     );
   }

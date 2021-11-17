@@ -9,10 +9,21 @@ class DatabaseService {
   static Future<XFile?> getImageGallery() async {
     var image = await ImagePicker().pickImage(
       source: ImageSource.gallery,
-      imageQuality: 50,
+      imageQuality: 70,
     );
     if ((image != null)) {
       return image;
+    } else {
+      return null;
+    }
+  }
+
+  static getVideoFromGallery() async {
+    var video = await ImagePicker().pickVideo(
+      source: ImageSource.gallery,
+    );
+    if ((video != null)) {
+      return video;
     } else {
       return null;
     }
@@ -22,7 +33,7 @@ class DatabaseService {
     String filename = basename(imageFile.path);
 
     FirebaseStorage storage = FirebaseStorage.instance;
-    final Reference reference = storage.ref().child('product/$filename');
+    final Reference reference = storage.ref().child('image/$filename');
     await reference.putFile(File(imageFile.path));
 
     String downloadUrl = await reference.getDownloadURL();
@@ -33,52 +44,24 @@ class DatabaseService {
     }
   }
 
-  static void setCourse(
-      String name, String description, int price, int quantity, String image) {
-    try {
-      var timeInMillis = DateTime.now().millisecondsSinceEpoch;
-      FirebaseFirestore.instance
-          .collection('product')
-          .doc(timeInMillis.toString())
-          .set({
-        'productId': timeInMillis.toString(),
-        'name': name,
-        'description': description,
-        'quantity': quantity,
-        'price': price,
-        'image': image,
-      });
-    } catch (error) {
-      toast(
-          'Gagal menambahkan produk baru, silahkan cek koneksi anda dan coba lagi nanti');
+  static Future<String?> uploadVideoCourse(XFile video) async {
+    String filename = basename(video.path);
+
+    FirebaseStorage storage = FirebaseStorage.instance;
+    final Reference reference = storage.ref().child('video/$filename');
+    await reference.putFile(File(video.path));
+
+    String downloadUrl = await reference.getDownloadURL();
+    if (downloadUrl != null) {
+      return downloadUrl;
+    } else {
+      return null;
     }
   }
 
-  static void updateCourse(String name, String description, int price,
-      int quantity, String image, String productId) {
-    try {
-      print(image);
-      if (image != '') {
-        FirebaseFirestore.instance.collection('product').doc(productId).update({
-          'name': name,
-          'description': description,
-          'quantity': quantity,
-          'image': image,
-          'price': price,
-        });
-      } else {
-        FirebaseFirestore.instance.collection('product').doc(productId).update({
-          'name': name,
-          'description': description,
-          'quantity': quantity,
-          'price': price,
-        });
-      }
-    } catch (error) {
-      toast(
-          'Gagal memperbarui produk, silahkan cek koneksi anda dan coba lagi nanti');
-    }
-  }
+
+
+
 
   static void deleteCourse(String courseId) {
     try {
@@ -86,8 +69,78 @@ class DatabaseService {
           .collection('course')
           .doc(courseId)
           .delete()
-          .then((value) => {toast('success')},
-      );
+          .then(
+            (value) => {toast('success')},
+          );
+    } catch (error) {
+      toast(
+          'Gagal menambahkan produk baru, silahkan cek koneksi anda dan coba lagi nanti');
+    }
+  }
+
+  static Future<void> setCourseImage(int courseId, String? plainPhoto) async {
+    try {
+      var doc = DateTime.now().millisecondsSinceEpoch;
+
+      await FirebaseFirestore.instance
+          .collection('course')
+          .doc(courseId.toString())
+          .collection("image")
+          .doc(doc.toString())
+          .set({
+        'uid': doc.toString(),
+        'image': plainPhoto,
+      });
+    } catch (error) {
+      toast(
+          'Gagal menambahkan produk baru, silahkan cek koneksi anda dan coba lagi nanti');
+    }
+  }
+
+  static void setCourseVideo(int courseId, String? urlVideo) async {
+    try {
+      var doc = DateTime.now().millisecondsSinceEpoch;
+
+      await FirebaseFirestore.instance
+          .collection('course')
+          .doc(courseId.toString())
+          .collection("video")
+          .doc(doc.toString())
+          .set({
+        'uid': doc.toString(),
+        'video': urlVideo,
+      });
+    } catch (error) {
+      toast(
+          'Gagal menambahkan produk baru, silahkan cek koneksi anda dan coba lagi nanti');
+    }
+  }
+
+  static Future<void> setCourse(int courseId, String title, String description) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('course')
+          .doc(courseId.toString())
+          .set({
+        'uid': courseId.toString(),
+        'title': title,
+        'description': description,
+      });
+    } catch (error) {
+      toast(
+          'Gagal menambahkan produk baru, silahkan cek koneksi anda dan coba lagi nanti');
+    }
+  }
+
+  static updateCourse(String courseId, String title, String description) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('course')
+          .doc(courseId.toString())
+          .update({
+        'title': title,
+        'description': description,
+      });
     } catch (error) {
       toast(
           'Gagal menambahkan produk baru, silahkan cek koneksi anda dan coba lagi nanti');

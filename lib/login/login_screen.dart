@@ -1,6 +1,7 @@
 import 'package:daun/home/home_screen.dart';
 import 'package:daun/provider/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,6 +12,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool visible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +58,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(
+                height: 16,
+              ),
+              Visibility(
+                visible: visible,
+                child: SpinKitRipple(
+                  color: Colors.green,
+                ),
+              ),
+              SizedBox(
                 height: 30,
               ),
               Container(
@@ -62,10 +74,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 55,
                 child: RaisedButton(
                   onPressed: () async {
+                    setState(() {
+                      visible = true;
+                    });
                     final provider = Provider.of<GoogleSignInProvider>(context,
                         listen: false);
                     await provider.googleLogin();
 
+                    setState(() {
+                      visible = false;
+                    });
                     Route route =
                         MaterialPageRoute(builder: (context) => HomePage());
                     Navigator.push(context, route);

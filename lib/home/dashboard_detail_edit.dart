@@ -1,37 +1,45 @@
-import 'dart:io';
 import 'package:daun/database/database_service.dart';
-import 'package:dotted_border/dotted_border.dart';
+import 'package:daun/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 
-class AddCourse extends StatefulWidget {
+class DashboardEdit extends StatefulWidget {
+  final String courseId;
+  final String title;
+  final String description;
+
+  DashboardEdit({
+    required this.courseId,
+    required this.title,
+    required this.description,
+  });
+
   @override
-  _AddCourseState createState() => _AddCourseState();
+  _DashboardEditState createState() => _DashboardEditState();
 }
 
-class _AddCourseState extends State<AddCourse> {
+class _DashboardEditState extends State<DashboardEdit> {
   var _title = TextEditingController();
   var _description = TextEditingController();
-  int totalPhoto = 0;
-  String selectedFile = "Belum ada video diunggah";
 
   final _formKey = GlobalKey<FormState>();
 
   bool visible = false;
-  bool isImageAdd = false;
-  XFile? _image, _video;
 
-  List<XFile> photo = [];
-
+  @override
+  void initState() {
+    super.initState();
+    _title.text = widget.title;
+    _description.text = widget.description;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'TAMBAHKAN MATERI BARU',
+          'EDIT MATERI',
           style: TextStyle(
             fontSize: 18,
             color: Colors.black,
@@ -147,133 +155,6 @@ class _AddCourseState extends State<AddCourse> {
                 color: Colors.white,
               ),
               SizedBox(
-                height: 5,
-              ),
-              Container(
-                height: 100,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    (!isImageAdd)
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: DottedBorder(
-                              color: Colors.grey,
-                              strokeWidth: 1,
-                              dashPattern: [6, 6],
-                              child: Container(
-                                child: Center(
-                                  child: Text("* Foto Materi"),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.file(
-                              File(
-                                _image!.path,
-                              ),
-                              fit: BoxFit.cover,
-                              width: 100,
-                              height: 100,
-                            ),
-                          ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            setState(() {
-                              visible = true;
-                            });
-                            _image = (await DatabaseService.getImageGallery())!;
-                            if (_image == null) {
-                              setState(() {
-                                print("Gagal ambil foto");
-                                visible = false;
-                              });
-                            } else {
-                              setState(() {
-                                isImageAdd = true;
-                                totalPhoto++;
-                                photo.add(_image!);
-                                toast('Berhasil menambah foto');
-                                visible = false;
-                              });
-                            }
-                          },
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Colors.green,
-                                size: 30,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text('Tambah Foto Materi')
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          margin: const EdgeInsets.only(left: 40,),
-                          child: Text('Total Foto Materi: $totalPhoto'),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RaisedButton(
-                    onPressed: () async {
-                      setState(() {
-                        visible = true;
-                      });
-                      _video = (await DatabaseService.getVideoFromGallery())!;
-                      if (_video == null) {
-                        setState(() {
-                          visible = false;
-                          toast('Gagal mengupload video materi');
-                        });
-                      } else {
-                        setState(() {
-                          visible = false;
-                          selectedFile = "Berhasil mengunggah video";
-                          toast('Berhasil mengupload video materi');
-                        });
-                      }
-                    },
-                    child: Text(
-                      "Unggah Video Materi",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    color: Colors.green,
-                  ),
-                ),
-                color: Colors.white,
-              ),
-              Text(
-                selectedFile,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
                 height: 16,
               ),
               Visibility(
@@ -292,32 +173,13 @@ class _AddCourseState extends State<AddCourse> {
                   padding: const EdgeInsets.all(8.0),
                   child: RaisedButton(
                     onPressed: () async {
-                      if (_formKey.currentState!.validate() && _image != null) {
+                      if (_formKey.currentState!.validate()) {
                         setState(() {
                           visible = true;
                         });
 
-                        var courseId = DateTime.now().millisecondsSinceEpoch;
-
-
-                        if(photo.length > 0) {
-                          for(int i=0; i<photo.length; i++) {
-                            String? plainPhoto = await DatabaseService.uploadImageCourse(photo[i]);
-                            DatabaseService.setCourseImage(courseId, plainPhoto);
-                          }
-                        }
-
-
-                        String? urlVideo = (_video != null)
-                            ? await DatabaseService.uploadVideoCourse(_video!)
-                            : null;
-                        if(urlVideo != null) {
-                          DatabaseService.setCourseVideo(courseId, urlVideo);
-                        }
-
-
-                        await DatabaseService.setCourse(
-                          courseId,
+                        await DatabaseService.updateCourse(
+                          widget.courseId,
                           _title.text,
                           _description.text,
                         );
@@ -326,19 +188,12 @@ class _AddCourseState extends State<AddCourse> {
                         _description.clear();
                         setState(() {
                           visible = false;
-                          totalPhoto = 0;
-                          _image = null;
-                          photo.clear();
-                          _video = null;
-                          isImageAdd = false;
                           showAlertDialog(context);
                         });
-                      } else if (_image == null) {
-                        toast('Pastikan anda mengunggah gambar produk');
                       }
                     },
                     child: Text(
-                      "Unggah Materi",
+                      "Edit Materi",
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     color: Colors.green,
@@ -370,7 +225,7 @@ class _AddCourseState extends State<AddCourse> {
             children: [
               Center(
                 child: Text(
-                  'Sukses Diunggah',
+                  'Sukses Diperbarui',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -396,7 +251,7 @@ class _AddCourseState extends State<AddCourse> {
                 height: 16,
               ),
               Text(
-                'Anda berhasil mengunggah materi baru!',
+                'Anda berhasil mengedit materi!',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -407,7 +262,10 @@ class _AddCourseState extends State<AddCourse> {
               ),
               FlatButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Route route = MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  );
+                  Navigator.push(context, route);
                 },
                 child: Container(
                   width: 250,
@@ -437,16 +295,5 @@ class _AddCourseState extends State<AddCourse> {
         );
       },
     );
-  }
-
-  void toast(String message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0);
   }
 }
