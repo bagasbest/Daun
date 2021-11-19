@@ -25,14 +25,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
-        onPressed: () {
-          Route route = MaterialPageRoute(builder: (context) => AddCourse());
-          Navigator.push(context, route);
-        },
-      ),
+      floatingActionButton: (user.email == "rekkyar@gmail.com")
+          ? FloatingActionButton(
+              child: Icon(Icons.add),
+              backgroundColor: Colors.green,
+              onPressed: () {
+                Route route =
+                    MaterialPageRoute(builder: (context) => AddCourse());
+                Navigator.push(context, route);
+              },
+            )
+          : null,
       body: body(),
     );
   }

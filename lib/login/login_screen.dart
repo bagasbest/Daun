@@ -1,5 +1,6 @@
 import 'package:daun/home/home_screen.dart';
 import 'package:daun/provider/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -84,9 +85,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     setState(() {
                       visible = false;
                     });
-                    Route route =
-                        MaterialPageRoute(builder: (context) => HomePage());
-                    Navigator.push(context, route);
+
+                    if(FirebaseAuth.instance.currentUser != null) {
+                      Route route =
+                      MaterialPageRoute(builder: (context) => HomePage());
+                      Navigator.push(context, route);
+                    } else {
+                      toast('Pengguna tidak jadi login');
+                    }
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(

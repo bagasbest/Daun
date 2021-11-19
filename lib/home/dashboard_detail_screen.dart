@@ -65,7 +65,9 @@ class _DashboardDetailScreenState extends State<DashboardDetailScreen> {
       String image = snapshot.docs[i]['image'].toString();
       imageContents.add(image);
       if (i == snapshot.docs.length - 1) {
-        isLoading = false;
+        setState(() {
+          isLoading = false;
+        });
       }
     }
   }
@@ -81,171 +83,167 @@ class _DashboardDetailScreenState extends State<DashboardDetailScreen> {
     return (isLoading)
         ? LoadingWidget()
         : Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'DETAIL MATERI',
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.black,
-          ),
-        ),
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Image.asset('assets/image/back.png'),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Route route = MaterialPageRoute(
-                builder: (context) =>
-                    DashboardEdit(
-                      courseId: widget.courseId,
-                      title: widget.title,
-                      description: widget.description,
-                    ),
-              );
-              Navigator.push(context, route);
-            },
-            child: Icon(
-              Icons.edit,
-              color: Colors.green,
-            ),
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          GestureDetector(
-            onTap: () {
-              _showDialogConfirmation();
-            },
-            child: Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
-          ),
-          SizedBox(
-            width: 16,
-          ),
-        ],
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            (videoUrl != "")
-                ? AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
-              child: VideoPlayer(
-                _controller,
+            appBar: AppBar(
+              title: Text(
+                'DETAIL MATERI',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
               ),
-            )
-                : Container(),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
+              leading: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Image.asset('assets/image/back.png'),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  (videoUrl != "") ? fab() : Container(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Divider(
-                      color: Colors.grey,
-                      thickness: 1,
-                    ),
-                  ),
-                  Container(
-                    height: 200,
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
-                    child: PageView.builder(
-                      itemCount: imageContents.length,
-                      onPageChanged: (int index) {
-                        setState(() {
-                          currentIndex = index;
-                        });
-                      },
-                      itemBuilder: (_, i) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            imageContents[i],
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        imageContents.length,
-                            (index) => buildDot(index, context),
+              actions: [
+                GestureDetector(
+                  onTap: () {
+                    Route route = MaterialPageRoute(
+                      builder: (context) => DashboardEdit(
+                        courseId: widget.courseId,
+                        title: widget.title,
+                        description: widget.description,
                       ),
-                    ),
+                    );
+                    Navigator.push(context, route);
+                  },
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.green,
                   ),
-                  SizedBox(
-                    height: 16,
+                ),
+                SizedBox(
+                  width: 16,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _showDialogConfirmation();
+                  },
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.red,
                   ),
-                  Text(
-                    'Judul Materi:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Divider(
-                      color: Colors.grey,
-                      thickness: 1,
-                    ),
-                  ),
-                  Text(
-                    'Penjelasan:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                ),
+                SizedBox(
+                  width: 16,
+                ),
+              ],
+              elevation: 0,
+              backgroundColor: Colors.white,
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  (videoUrl != "")
+                      ? AspectRatio(
+                          aspectRatio: _controller.value.aspectRatio,
+                          child: VideoPlayer(
+                            _controller,
+                          ),
+                        )
+                      : Container(),
                   SizedBox(
                     height: 10,
                   ),
-                  Text(
-                    widget.description,
-                    style: TextStyle(
-                      fontSize: 16,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        (videoUrl != "") ? fab() : Container(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                          ),
+                        ),
+                        Container(
+                          height: 200,
+                          width: MediaQuery.of(context).size.width,
+                          child: PageView.builder(
+                            itemCount: imageContents.length,
+                            onPageChanged: (int index) {
+                              setState(() {
+                                currentIndex = index;
+                              });
+                            },
+                            itemBuilder: (_, i) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  imageContents[i],
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              imageContents.length,
+                              (index) => buildDot(index, context),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Text(
+                          'Judul Materi:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          widget.title,
+                          style: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                          ),
+                        ),
+                        Text(
+                          'Penjelasan:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          widget.description,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Widget fab() {
@@ -306,14 +304,8 @@ class _DashboardDetailScreenState extends State<DashboardDetailScreen> {
               ),
               Container(
                 margin: EdgeInsets.only(
-                  left: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.1,
-                  right: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.1,
+                  left: MediaQuery.of(context).size.width * 0.1,
+                  right: MediaQuery.of(context).size.width * 0.1,
                 ),
                 child: Divider(
                   color: Colors.white,
@@ -449,17 +441,19 @@ class _DashboardDetailScreenState extends State<DashboardDetailScreen> {
                     .delete()
                     .then((_) async {
                   if (videoUrl != "") {
-                    await FirebaseStorage.instance.refFromURL(videoUrl).delete();
+                    await FirebaseStorage.instance
+                        .refFromURL(videoUrl)
+                        .delete();
                   }
 
                   for (int i = 0; i < imageContents.length; i++) {
-                    await FirebaseStorage.instance.refFromURL(imageContents[i])
+                    await FirebaseStorage.instance
+                        .refFromURL(imageContents[i])
                         .delete();
                   }
 
                   showAlertDialog(context);
-                })
-                    .catchError((_) {
+                }).catchError((_) {
                   toast("Gagal menghapus materi");
                 });
               },
@@ -470,6 +464,4 @@ class _DashboardDetailScreenState extends State<DashboardDetailScreen> {
       },
     );
   }
-
-
 }
