@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daun/home/dashboard_detail_edit.dart';
 import 'package:daun/utils/flutter_loading.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -29,6 +30,8 @@ class _DashboardDetailScreenState extends State<DashboardDetailScreen> {
   bool isLoading = true;
 
   var _controller;
+
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
@@ -96,34 +99,38 @@ class _DashboardDetailScreenState extends State<DashboardDetailScreen> {
                 child: Image.asset('assets/image/back.png'),
               ),
               actions: [
-                GestureDetector(
-                  onTap: () {
-                    Route route = MaterialPageRoute(
-                      builder: (context) => DashboardEdit(
-                        courseId: widget.courseId,
-                        title: widget.title,
-                        description: widget.description,
-                      ),
-                    );
-                    Navigator.push(context, route);
-                  },
-                  child: Icon(
-                    Icons.edit,
-                    color: Colors.green,
-                  ),
-                ),
+                (user.email == "rekkyar@gmail.com")
+                    ? GestureDetector(
+                        onTap: () {
+                          Route route = MaterialPageRoute(
+                            builder: (context) => DashboardEdit(
+                              courseId: widget.courseId,
+                              title: widget.title,
+                              description: widget.description,
+                            ),
+                          );
+                          Navigator.push(context, route);
+                        },
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.green,
+                        ),
+                      )
+                    : Container(),
                 SizedBox(
                   width: 16,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    _showDialogConfirmation();
-                  },
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
+                (user.email == "rekkyar@gmail.com")
+                    ? GestureDetector(
+                        onTap: () {
+                          _showDialogConfirmation();
+                        },
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                      )
+                    : Container(),
                 SizedBox(
                   width: 16,
                 ),
